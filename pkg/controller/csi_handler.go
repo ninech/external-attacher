@@ -737,7 +737,10 @@ func (h *csiHandler) getCredentialsFromPV(ctx context.Context, csiSource *v1.CSI
 	}
 	secretRef := csiSource.ControllerPublishSecretRef
 	if secretRef == nil {
-		return nil, nil
+		secretRef = csiSource.ControllerExpandSecretRef
+		if secretRef == nil {
+			return nil, nil
+		}
 	}
 
 	secret, err := h.client.CoreV1().Secrets(secretRef.Namespace).Get(ctx, secretRef.Name, metav1.GetOptions{})
